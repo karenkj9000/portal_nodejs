@@ -26,6 +26,12 @@ export class EmployeeRespository {
     return updateEmployeeDetails;
   }
 
+  public async softDeleteEmployeeById(id: string) {
+    const employeeRepo = getConnection().getRepository(Employee);
+    return employeeRepo.softDelete({
+      id,
+    });
+  }
   public async saveEmployeeDetails(employeeDetails: Employee) {
     const employeeRepo = getConnection().getRepository(Employee);
     return employeeRepo.save(employeeDetails);

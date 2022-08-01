@@ -44,4 +44,8 @@ export class EmployeeService {
       throw new HttpException(400, "Failed to create employee", "code-400");
     }
   }
+
+  public async softDeleteEmployeeById(id: string) {
+    return await this.employeeRepo.softDeleteEmployeeById(id);
+  }
 }
