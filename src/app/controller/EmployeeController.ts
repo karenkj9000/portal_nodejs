@@ -5,6 +5,7 @@ import APP_CONSTANTS from "../constants";
 import { EmployeeService } from "../service/employeeService";
 import validationMiddleware from "../middleware/validationMiddleware";
 import { CreateEmployeeDto } from "../dto/createEmployeeDto";
+import { UpdateEmployeeDto } from "../dto/updateEmployeeDto";
 
 class EmployeeController extends AbstractController {
   constructor(private employeeService: EmployeeService) {
@@ -14,7 +15,11 @@ class EmployeeController extends AbstractController {
   protected initializeRoutes() {
     this.router.get(`${this.path}`, this.getEmployee);
     this.router.get(`${this.path}/:id`, this.getEmployeeById);
-    this.router.put(`${this.path}/:id`, this.updateEmployeeById);
+    this.router.put(
+      `${this.path}/:id`,
+      validationMiddleware(UpdateEmployeeDto, APP_CONSTANTS.body),
+      this.updateEmployeeById
+    );
     this.router.delete(`${this.path}/:id`, this.deleteEmployeeById);
     this.router.post(
       `${this.path}`,

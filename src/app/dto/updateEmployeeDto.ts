@@ -1,32 +1,35 @@
-import { Type } from "class-transformer";
-import { IsNumber, IsString, ValidateNested } from "class-validator";
+import { IsNumber, IsOptional, IsString } from "class-validator";
 
-export class CreateEmployeeDto {
+export class UpdateEmployeeDto {
+  @IsOptional()
   @IsString()
   public name: string;
 
+  @IsOptional()
   @IsString()
   public role: string;
 
+  @IsOptional()
   @IsString()
   public status: string;
 
+  @IsOptional()
   @IsNumber()
   public experience: number;
 
+  @IsOptional()
   @IsString()
   public username: string;
 
+  @IsOptional()
   @IsString()
   public password: string;
 
+  @IsOptional()
   @IsNumber()
   public age: number;
 
+  @IsOptional()
   @IsString()
-  public departmentId: string;
-
-  //   // Validating nested objects
-  //   @ValidateNested({ each: true })
-  //   @Type(() => <Your nested DTO>)
+  public departmentId?: string;
 }

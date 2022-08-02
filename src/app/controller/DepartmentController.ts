@@ -3,6 +3,11 @@ import { NextFunction, Response } from "express";
 import RequestWithUser from "../util/rest/request";
 import APP_CONSTANTS from "../constants";
 import { DepartmentService } from "../service/departmentService";
+import validationMiddleware from "../middleware/validationMiddleware";
+import { CreateDepartmentDto } from "../dto/createDepartmentDto";
+import { UpdateDepartmentByParamsDto } from "../dto/updateDepartmentByParamsDto";
+import { UpdateDepartmentDto } from "../dto/updateDepartmentDto";
+import App from "../app";
 
 class DepartmentController extends AbstractController {
   constructor(private departmentService: DepartmentService) {
@@ -12,11 +17,16 @@ class DepartmentController extends AbstractController {
   protected initializeRoutes() {
     this.router.get(`${this.path}`, this.getDepartment);
     this.router.get(`${this.path}/:id`, this.getDepartmentById);
-    this.router.put(`${this.path}/:id`, this.updateDepartmentById);
+    this.router.put(
+      `${this.path}/:id`,
+      validationMiddleware(UpdateDepartmentByParamsDto, APP_CONSTANTS.params),
+      validationMiddleware(UpdateDepartmentDto, APP_CONSTANTS.body),
+      this.updateDepartmentById
+    );
     this.router.delete(`${this.path}/:id`, this.deleteDepartmentById);
     this.router.post(
       `${this.path}`,
-      // validationMiddleware(CreateDepartmentDto, APP_CONSTANTS.body),
+      validationMiddleware(CreateDepartmentDto, APP_CONSTANTS.body),
       // this.asyncRouteHandler(this.createDepartment)
       this.createDepartment
     );

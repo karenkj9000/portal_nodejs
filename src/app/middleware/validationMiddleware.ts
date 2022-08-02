@@ -10,13 +10,42 @@ import { ErrorCodes } from "../util/errorCode";
  * Middleware to validate the request.
  * Validations are performed using class validator
  */
+
+// function validationMiddleware<T>(
+//   type: any,
+//   parameter: string,
+//   skipMissingProperties = false
+// ): express.RequestHandler {
+//   return (req, res, next) => {
+//     const requestBody = plainToClass(type, req.body);
+//     validate(requestBody, {
+//       skipMissingProperties,
+//       forbidUnknownValues: true,
+//       whitelist: true,
+//     }).then((errors: ValidationError[]) => {
+//       if (errors.length > 0) {
+//         const errorDetail = ErrorCodes.VALIDATION_ERROR;
+//         next(errors);
+//       } else {
+//         req.body = requestBody;
+//         next();
+//       }
+//     });
+//   };
+// }
+
 function validationMiddleware<T>(
   type: any,
   parameter: string,
   skipMissingProperties = false
 ): express.RequestHandler {
   return (req, res, next) => {
-    const requestBody = plainToClass(type, req.body);
+    let requestBody: any;
+    if (parameter === "body") {
+      requestBody = plainToClass(type, req.body);
+    } else if (parameter === "params") {
+      requestBody = plainToClass(type, req.params);
+    }
     validate(requestBody, {
       skipMissingProperties,
       forbidUnknownValues: true,
@@ -26,7 +55,9 @@ function validationMiddleware<T>(
         const errorDetail = ErrorCodes.VALIDATION_ERROR;
         next(errors);
       } else {
-        req.body = requestBody;
+        if (parameter === "body") {
+          req.body = requestBody;
+        }
         next();
       }
     });

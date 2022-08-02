@@ -36,20 +36,20 @@ export class EmployeeService {
 
   public async updateEmployeeById(id: string, employeeDetails: any) {
     try {
-      const updatedEmployee = plainToClass(Employee, {
-        name: employeeDetails.name,
-        dateofjoining: employeeDetails.dateofjoining,
-        role: employeeDetails.role,
-        status: employeeDetails.status,
-        experience: employeeDetails.experience,
-        username: employeeDetails.username,
-        password: employeeDetails.password,
-        age: employeeDetails.age,
-        departmentId: employeeDetails.departmentId,
-      });
+      // const updatedEmployee = plainToClass(Employee, {
+      //   name: employeeDetails.name,
+      //   dateofjoining: employeeDetails.dateofjoining,
+      //   role: employeeDetails.role,
+      //   status: employeeDetails.status,
+      //   experience: employeeDetails.experience,
+      //   username: employeeDetails.username,
+      //   password: employeeDetails.password,
+      //   age: employeeDetails.age,
+      //   departmentId: employeeDetails.departmentId,
+      // });
       const save = await this.employeeRepo.updateEmployeeDetails(
         id,
-        updatedEmployee
+        employeeDetails
       );
       return save;
     } catch (err) {
