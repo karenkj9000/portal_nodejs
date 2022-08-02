@@ -1,7 +1,10 @@
 import { plainToClass } from "class-transformer";
+import { EntityNotFoundError } from "typeorm";
 import { Department } from "../entities/Department";
+import EntityNotFoundException from "../exception/EntityNotFoundException";
 import HttpException from "../exception/HttpException";
 import { DepartmentRespository } from "../repository/departmentRepository";
+import { ErrorCodes } from "../util/errorCode";
 
 export class DepartmentService {
   constructor(private departmentRepo: DepartmentRespository) {}
@@ -10,7 +13,13 @@ export class DepartmentService {
   }
 
   async getDepartmentById(id: string) {
-    return await this.departmentRepo.getDepartmentById(id);
+    const department = await this.departmentRepo.getDepartmentById(id);
+    if (!department) {
+      throw new EntityNotFoundException(
+        ErrorCodes.DEPARTMENT_WITH_ID_NOT_FOUND
+      );
+    }
+    return department;
   }
 
   public async createDepartment(departmentDetails: any) {
@@ -29,20 +38,24 @@ export class DepartmentService {
 
   public async updateDepartmentById(id: string, departmentDetails: any) {
     try {
-      const updatedDepartment = plainToClass(Department, {
-        name: departmentDetails.name,
-      });
+      await this.getDepartmentById(id);
       const save = await this.departmentRepo.updateDepartmentDetails(
         id,
-        updatedDepartment
+        departmentDetails
       );
       return save;
     } catch (err) {
-      throw new HttpException(400, "Failed to create department", "code-400");
+      //throw new HttpException(400, "Failed to create department", "code-400");
+      throw err;
     }
   }
 
   public async softDeleteDepartmentById(id: string) {
-    return await this.departmentRepo.softDeleteDepartmentById(id);
+    try {
+      await this.getDepartmentById(id);
+      return await this.departmentRepo.softDeleteDepartmentById(id);
+    } catch (err) {
+      throw err;
+    }
   }
 }

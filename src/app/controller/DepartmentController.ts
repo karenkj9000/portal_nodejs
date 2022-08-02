@@ -7,6 +7,8 @@ import validationMiddleware from "../middleware/validationMiddleware";
 import { CreateDepartmentDto } from "../dto/createDepartmentDto";
 import { UpdateDepartmentByParamsDto } from "../dto/updateDepartmentByParamsDto";
 import { UpdateDepartmentDto } from "../dto/updateDepartmentDto";
+import { GetDepartmentByParamsDto } from "../dto/getDepartmentByParamsDto";
+import { DeleteDepartmentByParamsDto } from "../dto/deleteDepartmentByParamsDto";
 import App from "../app";
 
 class DepartmentController extends AbstractController {
@@ -16,19 +18,27 @@ class DepartmentController extends AbstractController {
   }
   protected initializeRoutes() {
     this.router.get(`${this.path}`, this.getDepartment);
-    this.router.get(`${this.path}/:id`, this.getDepartmentById);
+    this.router.get(
+      `${this.path}/:id`,
+      validationMiddleware(GetDepartmentByParamsDto, APP_CONSTANTS.params),
+      this.getDepartmentById // params validated
+    );
     this.router.put(
       `${this.path}/:id`,
       validationMiddleware(UpdateDepartmentByParamsDto, APP_CONSTANTS.params),
       validationMiddleware(UpdateDepartmentDto, APP_CONSTANTS.body),
-      this.updateDepartmentById
+      this.updateDepartmentById // params,body validated
     );
-    this.router.delete(`${this.path}/:id`, this.deleteDepartmentById);
+    this.router.delete(
+      `${this.path}/:id`,
+      validationMiddleware(DeleteDepartmentByParamsDto, APP_CONSTANTS.params),
+      this.deleteDepartmentById // params validated
+    );
     this.router.post(
       `${this.path}`,
       validationMiddleware(CreateDepartmentDto, APP_CONSTANTS.body),
       // this.asyncRouteHandler(this.createDepartment)
-      this.createDepartment
+      this.createDepartment // body validated
     );
   }
   private getDepartment = async (

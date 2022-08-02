@@ -15,6 +15,9 @@ export class CreateEmployeeDto {
   public experience: number;
 
   @IsString()
+  public dateofjoining: string;
+
+  @IsString()
   public username: string;
 
   @IsString()

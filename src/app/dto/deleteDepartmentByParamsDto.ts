@@ -1,6 +1,6 @@
 import { IsNumber, IsOptional, IsString, IsUUID } from "class-validator";
 
-export class UpdateDepartmentByParamsDto {
+export class DeleteDepartmentByParamsDto {
   @IsUUID()
   public id: string;
 }
