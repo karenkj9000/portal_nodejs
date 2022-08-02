@@ -28,7 +28,7 @@ class App extends EventEmitter {
    */
   public listen() {
     this.app.listen(process.env.PORT, () => {
-      console.log(`App listening on ${process.env.PORT}`)
+      console.log(`App listening on ${process.env.PORT}`);
     });
   }
 
@@ -46,15 +46,21 @@ class App extends EventEmitter {
     this.app.use(bodyParser.json());
     this.app.use(cookieParser());
     this.app.use(compression());
-    this.app.use(express.static('public'));
-
+    this.app.use(express.static("public"));
 
     // use for computing processing time on response
-    this.app.use((request: RequestWithUser, response: express.Response, next: express.NextFunction) => {
-      request.startTime = Date.now();
-      next();
-    });
-  } 
+    this.app.use(
+      (
+        request: RequestWithUser,
+        response: express.Response,
+        next: express.NextFunction
+      ) => {
+        request.startTime = Date.now();
+        // console.log(request.startTime);
+        next();
+      }
+    );
+  }
 
   /**
    * Iterates through controllers in services/index and adds their routes/handlers to app
@@ -65,7 +71,6 @@ class App extends EventEmitter {
       this.app.use("/", controller.router);
     });
   }
-
 }
 
 export default App;

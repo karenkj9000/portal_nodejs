@@ -18,10 +18,16 @@ export class Employee extends AbstractEntity {
   public role: string;
   @Column({ nullable: false, default: "Inactive" })
   public status: string;
-  @Column({ nullable: false, default: "0" })
-  public experience: string;
+  @Column({ nullable: false, default: 0 })
+  public experience: number;
   @Column({ nullable: true })
   public dateofjoining: string;
+  @Column({ nullable: false })
+  public username: string;
+  @Column({ nullable: false })
+  public password: string;
+  @Column({ nullable: false, default: 0 })
+  public age: number;
 
   @ManyToOne(() => Department, { cascade: true })
   @JoinColumn()

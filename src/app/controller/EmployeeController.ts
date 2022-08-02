@@ -3,6 +3,8 @@ import { NextFunction, Response } from "express";
 import RequestWithUser from "../util/rest/request";
 import APP_CONSTANTS from "../constants";
 import { EmployeeService } from "../service/employeeService";
+import validationMiddleware from "../middleware/validationMiddleware";
+import { CreateEmployeeDto } from "../dto/createEmployeeDto";
 
 class EmployeeController extends AbstractController {
   constructor(private employeeService: EmployeeService) {
@@ -16,7 +18,7 @@ class EmployeeController extends AbstractController {
     this.router.delete(`${this.path}/:id`, this.deleteEmployeeById);
     this.router.post(
       `${this.path}`,
-      // validationMiddleware(CreateEmployeeDto, APP_CONSTANTS.body),
+      validationMiddleware(CreateEmployeeDto, APP_CONSTANTS.body),
       // this.asyncRouteHandler(this.createEmployee)
       this.createEmployee
     );
@@ -98,6 +100,7 @@ class EmployeeController extends AbstractController {
     next: NextFunction
   ) => {
     try {
+      // console.log(request.body);
       const data = await this.employeeService.createEmployee(request.body);
       response.send(
         this.fmt.formatResponse(data, Date.now() - request.startTime, "OK")

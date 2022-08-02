@@ -17,19 +17,20 @@ export class EmployeeService {
     try {
       const newEmployee = plainToClass(Employee, {
         name: employeeDetails.name,
-        // username: employeeDetails.username,
-        // age: employeeDetails.age,
         dateofjoining: employeeDetails.dateofjoining,
         role: employeeDetails.role,
         status: employeeDetails.status,
         experience: employeeDetails.experience,
+        username: employeeDetails.username,
+        password: employeeDetails.password,
+        age: employeeDetails.age,
         departmentId: employeeDetails.departmentId,
-        // isActive: true,
       });
       const save = await this.employeeRepo.saveEmployeeDetails(newEmployee);
       return save;
     } catch (err) {
-      throw new HttpException(400, "Failed to create employee", "code-400");
+      // throw new HttpException(400, "Failed to create employee", "code-400");
+      throw err;
     }
   }
 
@@ -41,6 +42,9 @@ export class EmployeeService {
         role: employeeDetails.role,
         status: employeeDetails.status,
         experience: employeeDetails.experience,
+        username: employeeDetails.username,
+        password: employeeDetails.password,
+        age: employeeDetails.age,
         departmentId: employeeDetails.departmentId,
       });
       const save = await this.employeeRepo.updateEmployeeDetails(
