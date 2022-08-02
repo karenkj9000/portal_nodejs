@@ -14,14 +14,14 @@ export class Employee extends AbstractEntity {
   public id: string;
   @Column({ nullable: false })
   public name: string;
-  @Column({ nullable: false })
+  @Column({ nullable: false, default: "No Role" })
   public role: string;
-  @Column({ nullable: false })
+  @Column({ nullable: false, default: "Inactive" })
   public status: string;
-  @Column({ nullable: false })
+  @Column({ nullable: false, default: "0" })
   public experience: string;
-  @Column({ nullable: false })
-  public doj: string;
+  @Column({ nullable: true })
+  public dateofjoining: string;
 
   @ManyToOne(() => Department, { cascade: true })
   @JoinColumn()

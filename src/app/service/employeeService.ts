@@ -19,6 +19,10 @@ export class EmployeeService {
         name: employeeDetails.name,
         // username: employeeDetails.username,
         // age: employeeDetails.age,
+        dateofjoining: employeeDetails.dateofjoining,
+        role: employeeDetails.role,
+        status: employeeDetails.status,
+        experience: employeeDetails.experience,
         departmentId: employeeDetails.departmentId,
         // isActive: true,
       });
@@ -33,6 +37,10 @@ export class EmployeeService {
     try {
       const updatedEmployee = plainToClass(Employee, {
         name: employeeDetails.name,
+        dateofjoining: employeeDetails.dateofjoining,
+        role: employeeDetails.role,
+        status: employeeDetails.status,
+        experience: employeeDetails.experience,
         departmentId: employeeDetails.departmentId,
       });
       const save = await this.employeeRepo.updateEmployeeDetails(
