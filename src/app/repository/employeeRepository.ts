@@ -1,31 +1,32 @@
 import { getConnection } from "typeorm";
+import { CreateEmployeeDto } from "../dto/createEmployeeDto";
+import { UpdateEmployeeDto } from "../dto/updateEmployeeDto";
 import { Employee } from "../entities/Employee";
 
 export class EmployeeRespository {
   async getAllEmployees(): Promise<Employee[]> {
     const employeeRepo = getConnection().getRepository(Employee);
-    return employeeRepo.find();
+    return employeeRepo.find({ relations: ["address"] });
   }
 
   async getEmployeeById(id: string): Promise<Employee> {
     const employeeRepo = getConnection().getRepository(Employee);
-    return employeeRepo.findOne(id);
+    return employeeRepo.findOne({ where: { id: id }, relations: ["address"] });
   }
 
-  public async updateEmployeeDetails(employeeId: string, employeeDetails: any) {
+  public async updateEmployeeDetails(employeeDetails: Employee) {
     const employeeRepo = getConnection().getRepository(Employee);
-    const updateEmployeeDetails = await employeeRepo.update(
-      { id: employeeId, deletedAt: null },
-      employeeDetails
-    );
-    return updateEmployeeDetails;
+    const data = await employeeRepo.save(employeeDetails);
+    return data;
   }
 
   public async softDeleteEmployeeById(id: string) {
     const employeeRepo = getConnection().getRepository(Employee);
-    return employeeRepo.softDelete({
-      id,
+    const employee = await employeeRepo.findOne({
+      where: { id: id },
+      relations: ["address"],
     });
+    return employeeRepo.softRemove(employee);
   }
   public async saveEmployeeDetails(employeeDetails: Employee) {
     const employeeRepo = getConnection().getRepository(Employee);
@@ -35,7 +36,7 @@ export class EmployeeRespository {
   public async getEmployeeByUsername(username: string) {
     const employeeRepo = getConnection().getRepository(Employee);
     const employeeDetail = await employeeRepo.findOne({
-      where: { username },
+      where: { name: username },
     });
     return employeeDetail;
   }

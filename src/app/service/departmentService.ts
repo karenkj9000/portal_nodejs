@@ -1,5 +1,7 @@
 import { plainToClass } from "class-transformer";
 import { EntityNotFoundError } from "typeorm";
+import { CreateDepartmentDto } from "../dto/createDepartmentDto";
+import { UpdateDepartmentDto } from "../dto/updateDepartmentDto";
 import { Department } from "../entities/Department";
 import EntityNotFoundException from "../exception/EntityNotFoundException";
 import HttpException from "../exception/HttpException";
@@ -22,13 +24,10 @@ export class DepartmentService {
     return department;
   }
 
-  public async createDepartment(departmentDetails: any) {
+  public async createDepartment(departmentDetails: CreateDepartmentDto) {
     try {
-      const newDepartment = plainToClass(Department, {
-        name: departmentDetails.name,
-      });
       const save = await this.departmentRepo.saveDepartmentDetails(
-        newDepartment
+        departmentDetails
       );
       return save;
     } catch (err) {
@@ -36,7 +35,10 @@ export class DepartmentService {
     }
   }
 
-  public async updateDepartmentById(id: string, departmentDetails: any) {
+  public async updateDepartmentById(
+    id: string,
+    departmentDetails: UpdateDepartmentDto
+  ) {
     try {
       await this.getDepartmentById(id);
       const save = await this.departmentRepo.updateDepartmentDetails(

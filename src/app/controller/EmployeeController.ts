@@ -1,7 +1,7 @@
 import { AbstractController } from "../util/rest/controller";
 import { NextFunction, Response } from "express";
 import RequestWithUser from "../util/rest/request";
-import APP_CONSTANTS from "../constants";
+import APP_CONSTANTS, { ROLES } from "../constants";
 import { EmployeeService } from "../service/employeeService";
 import validationMiddleware from "../middleware/validationMiddleware";
 import { CreateEmployeeDto } from "../dto/createEmployeeDto";
@@ -19,20 +19,20 @@ class EmployeeController extends AbstractController {
   protected initializeRoutes() {
     this.router.get(
       `${this.path}`,
-      //authorize(["admin"]),
+      authorize([ROLES.admin, ROLES.developer, ROLES.hr]),
       this.getEmployee
     );
 
     this.router.get(
       `${this.path}/:id`,
-      //authorize(["admin"]),
+      authorize([ROLES.admin, ROLES.hr]),
       validationMiddleware(GetEmployeeByParamsDto, APP_CONSTANTS.params),
       this.getEmployeeById // params validated
     );
 
     this.router.put(
       `${this.path}/:id`,
-      //authorize(["admin"]),
+      authorize([ROLES.admin]),
       validationMiddleware(UpdateEmployeeByParamsDto, APP_CONSTANTS.params),
       validationMiddleware(UpdateEmployeeDto, APP_CONSTANTS.body),
       this.updateEmployeeById // params,body validated
@@ -40,14 +40,14 @@ class EmployeeController extends AbstractController {
 
     this.router.delete(
       `${this.path}/:id`,
-      //authorize(["admin"]),
+      authorize([ROLES.admin]),
       validationMiddleware(DeleteEmployeeByParamsDto, APP_CONSTANTS.params),
       this.deleteEmployeeById // params validated
     );
 
     this.router.post(
       `${this.path}`,
-      //authorize(["admin"]),
+      authorize([ROLES.admin]),
       validationMiddleware(CreateEmployeeDto, APP_CONSTANTS.body),
       // this.asyncRouteHandler(this.createEmployee)
       this.createEmployee // body validated

@@ -1,4 +1,6 @@
 import { getConnection } from "typeorm";
+import { CreateDepartmentDto } from "../dto/createDepartmentDto";
+import { UpdateDepartmentDto } from "../dto/updateDepartmentDto";
 import { Department } from "../entities/Department";
 
 export class DepartmentRespository {
@@ -14,7 +16,7 @@ export class DepartmentRespository {
 
   public async updateDepartmentDetails(
     departmentId: string,
-    departmentDetails: any
+    departmentDetails: UpdateDepartmentDto
   ) {
     const departmentRepo = getConnection().getRepository(Department);
     const updateDepartmentDetails = await departmentRepo.update(
@@ -32,7 +34,7 @@ export class DepartmentRespository {
       id,
     });
   }
-  public async saveDepartmentDetails(departmentDetails: Department) {
+  public async saveDepartmentDetails(departmentDetails: CreateDepartmentDto) {
     const departmentRepo = getConnection().getRepository(Department);
     return departmentRepo.save(departmentDetails);
   }

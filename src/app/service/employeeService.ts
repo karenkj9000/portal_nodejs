@@ -9,6 +9,9 @@ import bcrypt from "bcrypt";
 import UserNotAuthorizedException from "../exception/UserNotAuthorizedException";
 import IncorrectUsernameOrPasswordException from "../exception/IncorrectUsernameOrPasswordException";
 import jsonwebtoken from "jsonwebtoken";
+import { CreateEmployeeDto } from "../dto/createEmployeeDto";
+import { UpdateEmployeeDto } from "../dto/updateEmployeeDto";
+import { Address } from "../entities/Address";
 
 export class EmployeeService {
   constructor(private employeeRepo: EmployeeRespository) {}
@@ -25,9 +28,55 @@ export class EmployeeService {
     return employee;
   }
 
-  public async createEmployee(employeeDetails: any) {
+  public async createEmployee(
+    employeeDetails: CreateEmployeeDto
+  ): Promise<CreateEmployeeDto & Employee> {
     try {
+      const newAddress = plainToClass(Address, {
+        line1: employeeDetails.address.line1,
+        line2: employeeDetails.address.line2,
+        city: employeeDetails.address.city,
+        state: employeeDetails.address.state,
+        pin: employeeDetails.address.pin,
+      });
       const newEmployee = plainToClass(Employee, {
+        name: employeeDetails.name,
+        role: employeeDetails.role,
+        status: employeeDetails.status,
+        experience: employeeDetails.experience,
+        dateofjoining: employeeDetails.dateofjoining,
+        username: employeeDetails.username,
+        password: employeeDetails.password
+          ? await bcrypt.hash(employeeDetails.password, 10)
+          : "",
+        age: employeeDetails.age,
+        departmentId: employeeDetails.departmentId,
+        address: newAddress,
+      });
+      const save = await this.employeeRepo.saveEmployeeDetails(newEmployee);
+      return save;
+    } catch (err) {
+      // throw new HttpException(400, "Failed to create employee", "code-400");
+      throw err;
+    }
+  }
+
+  public async updateEmployeeById(
+    id: string,
+    employeeDetails: UpdateEmployeeDto
+  ) {
+    try {
+      const updatedAddress = plainToClass(Address, {
+        id: employeeDetails.addressId,
+        line1: employeeDetails.address.line1,
+        line2: employeeDetails.address.line2,
+        city: employeeDetails.address.city,
+        state: employeeDetails.address.state,
+        pin: employeeDetails.address.pin,
+      });
+
+      const updatedEmployee = plainToClass(Employee, {
+        id: id,
         name: employeeDetails.name,
         dateofjoining: employeeDetails.dateofjoining,
         role: employeeDetails.role,
@@ -39,33 +88,10 @@ export class EmployeeService {
           : "",
         age: employeeDetails.age,
         departmentId: employeeDetails.departmentId,
+        address: updatedAddress,
       });
-      const save = await this.employeeRepo.saveEmployeeDetails(newEmployee);
-      return save;
-    } catch (err) {
-      // throw new HttpException(400, "Failed to create employee", "code-400");
-      throw err;
-    }
-  }
-
-  public async updateEmployeeById(id: string, employeeDetails: any) {
-    try {
-      // const updatedEmployee = plainToClass(Employee, {
-      //   name: employeeDetails.name,
-      //   dateofjoining: employeeDetails.dateofjoining,
-      //   role: employeeDetails.role,
-      //   status: employeeDetails.status,
-      //   experience: employeeDetails.experience,
-      //   username: employeeDetails.username,
-      //   password: employeeDetails.password,
-      //   age: employeeDetails.age,
-      //   departmentId: employeeDetails.departmentId,
-      // });
-
-      await this.getEmployeeById(id);
       const save = await this.employeeRepo.updateEmployeeDetails(
-        id,
-        employeeDetails
+        updatedEmployee
       );
       return save;
     } catch (err) {
@@ -97,7 +123,7 @@ export class EmployeeService {
       let payload = {
         "custom:id": employeeDetails.id,
         "custom:name": employeeDetails.name,
-        "custom:role": "admin",
+        "custom:role": employeeDetails.role,
       };
 
       const token = this.generateAuthTokens(payload);

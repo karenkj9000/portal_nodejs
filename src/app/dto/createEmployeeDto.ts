@@ -1,5 +1,8 @@
 import { Type } from "class-transformer";
 import { IsNumber, IsString, ValidateNested } from "class-validator";
+import { Department } from "../entities/Department";
+import { CreateAddressDto } from "./createAddressDto";
+import { CreateDepartmentDto } from "./createDepartmentDto";
 
 export class CreateEmployeeDto {
   @IsString()
@@ -29,7 +32,12 @@ export class CreateEmployeeDto {
   @IsString()
   public departmentId: string;
 
-  //   // Validating nested objects
-  //   @ValidateNested({ each: true })
-  //   @Type(() => <Your nested DTO>)
+  // Validating nested objects
+  @ValidateNested({ each: true })
+  @Type(() => CreateAddressDto)
+  public address: CreateAddressDto;
+
+  @ValidateNested({ each: true })
+  @Type(() => CreateDepartmentDto)
+  public department?: CreateDepartmentDto;
 }

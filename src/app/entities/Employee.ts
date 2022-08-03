@@ -4,8 +4,10 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  OneToOne,
 } from "typeorm";
 import { AbstractEntity } from "./AbstractEntity";
+import { Address } from "./Address";
 import { Department } from "./Department";
 
 @Entity("employee")
@@ -14,19 +16,19 @@ export class Employee extends AbstractEntity {
   public id: string;
   @Column({ nullable: false })
   public name: string;
-  @Column({ nullable: false, default: "No Role" })
+  @Column({ nullable: false })
   public role: string;
-  @Column({ nullable: false, default: "Inactive" })
+  @Column({ nullable: false })
   public status: string;
-  @Column({ nullable: false, default: 0 })
+  @Column({ nullable: false })
   public experience: number;
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   public dateofjoining: string;
   @Column({ nullable: false })
   public username: string;
   @Column({ nullable: false })
   public password: string;
-  @Column({ nullable: false, default: 0 })
+  @Column({ nullable: false })
   public age: number;
 
   @ManyToOne(() => Department, { cascade: true })
@@ -34,4 +36,10 @@ export class Employee extends AbstractEntity {
   public department: Department;
   @Column({ nullable: false })
   public departmentId: string;
+
+  @OneToOne(() => Address, { cascade: true })
+  @JoinColumn()
+  public address: Address;
+  @Column({ nullable: false })
+  public addressId: string;
 }

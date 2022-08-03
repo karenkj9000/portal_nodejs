@@ -1,7 +1,7 @@
 import { AbstractController } from "../util/rest/controller";
 import { NextFunction, Response } from "express";
 import RequestWithUser from "../util/rest/request";
-import APP_CONSTANTS from "../constants";
+import APP_CONSTANTS, { ROLES } from "../constants";
 import { DepartmentService } from "../service/departmentService";
 import validationMiddleware from "../middleware/validationMiddleware";
 import { CreateDepartmentDto } from "../dto/createDepartmentDto";
@@ -9,6 +9,7 @@ import { UpdateDepartmentByParamsDto } from "../dto/updateDepartmentByParamsDto"
 import { UpdateDepartmentDto } from "../dto/updateDepartmentDto";
 import { GetDepartmentByParamsDto } from "../dto/getDepartmentByParamsDto";
 import { DeleteDepartmentByParamsDto } from "../dto/deleteDepartmentByParamsDto";
+import authorize from "../middleware/authorize";
 import App from "../app";
 
 class DepartmentController extends AbstractController {
@@ -17,25 +18,33 @@ class DepartmentController extends AbstractController {
     this.initializeRoutes();
   }
   protected initializeRoutes() {
-    this.router.get(`${this.path}`, this.getDepartment);
+    this.router.get(
+      `${this.path}`,
+      authorize([ROLES.admin, ROLES.developer, ROLES.hr]),
+      this.getDepartment
+    );
     this.router.get(
       `${this.path}/:id`,
+      authorize([ROLES.admin, ROLES.developer, ROLES.hr]),
       validationMiddleware(GetDepartmentByParamsDto, APP_CONSTANTS.params),
       this.getDepartmentById // params validated
     );
     this.router.put(
       `${this.path}/:id`,
+      authorize([ROLES.admin]),
       validationMiddleware(UpdateDepartmentByParamsDto, APP_CONSTANTS.params),
       validationMiddleware(UpdateDepartmentDto, APP_CONSTANTS.body),
       this.updateDepartmentById // params,body validated
     );
     this.router.delete(
       `${this.path}/:id`,
+      authorize([ROLES.admin]),
       validationMiddleware(DeleteDepartmentByParamsDto, APP_CONSTANTS.params),
       this.deleteDepartmentById // params validated
     );
     this.router.post(
       `${this.path}`,
+      authorize([ROLES.admin]),
       validationMiddleware(CreateDepartmentDto, APP_CONSTANTS.body),
       // this.asyncRouteHandler(this.createDepartment)
       this.createDepartment // body validated
