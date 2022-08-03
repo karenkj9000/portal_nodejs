@@ -6,6 +6,7 @@ import RequestWithUser from "../util/rest/request";
 import jsonwebtoken from "jsonwebtoken";
 import APP_CONSTANTS from "../constants";
 import { ErrorCodes } from "../util/errorCode";
+import UserInvalidRoleException from "../exception/UserInvalidRoleException";
 
 const authorize = (permittedRoles?: string[]) => {
   return async (
@@ -19,7 +20,7 @@ const authorize = (permittedRoles?: string[]) => {
       const data = jsonwebtoken.decode(token);
       const decodedData = JSON.parse(JSON.stringify(data));
       if (!permittedRoles.includes(decodedData["custom:role"])) {
-        throw new UserNotAuthorizedException(ErrorCodes.UNAUTHORIZED);
+        throw new UserInvalidRoleException(ErrorCodes.UNAUTHORIZED);
       }
       return next();
     } catch (error) {
