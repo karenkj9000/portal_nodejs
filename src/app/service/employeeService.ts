@@ -34,9 +34,7 @@ export class EmployeeService {
     try {
       employeeDetails = {
         ...employeeDetails,
-        password: employeeDetails.password
-          ? await bcrypt.hash(employeeDetails.password, 10)
-          : "",
+        password: await bcrypt.hash(employeeDetails.password, 10),
       };
       const save = await this.employeeRepo.saveEmployeeDetails(employeeDetails);
       return save;
@@ -57,11 +55,12 @@ export class EmployeeService {
 
     try {
       employeeDetails.address.id = employee.address.id;
+      let oldPassword = employee.password;
       employeeDetails = {
         ...employeeDetails,
         password: employeeDetails.password
           ? await bcrypt.hash(employeeDetails.password, 10)
-          : "",
+          : oldPassword,
       };
       const save = await this.employeeRepo.updateEmployeeDetails(
         id,
