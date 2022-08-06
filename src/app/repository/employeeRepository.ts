@@ -14,7 +14,11 @@ export class EmployeeRespository {
     return employeeRepo.findOne({ where: { id: id }, relations: ["address"] });
   }
 
-  public async updateEmployeeDetails(employeeDetails: Employee) {
+  public async updateEmployeeDetails(
+    id: string,
+    employeeDetails: UpdateEmployeeDto
+  ) {
+    employeeDetails.id = id;
     const employeeRepo = getConnection().getRepository(Employee);
     const data = await employeeRepo.save(employeeDetails);
     return data;
@@ -28,7 +32,7 @@ export class EmployeeRespository {
     });
     return employeeRepo.softRemove(employee);
   }
-  public async saveEmployeeDetails(employeeDetails: Employee) {
+  public async saveEmployeeDetails(employeeDetails: CreateEmployeeDto) {
     const employeeRepo = getConnection().getRepository(Employee);
     return employeeRepo.save(employeeDetails);
   }

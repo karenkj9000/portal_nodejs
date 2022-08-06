@@ -3,6 +3,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   Validate,
   ValidateNested,
 } from "class-validator";
@@ -10,6 +11,10 @@ import { Address } from "../entities/Address";
 import { UpdateAddressDto } from "./updateAddressDto";
 
 export class UpdateEmployeeDto {
+  @IsOptional()
+  @IsUUID()
+  public id: string;
+
   @IsOptional()
   @IsString()
   public name: string;
@@ -50,6 +55,7 @@ export class UpdateEmployeeDto {
   @IsString()
   public addressId?: string;
 
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => UpdateAddressDto)
   public address: Address;

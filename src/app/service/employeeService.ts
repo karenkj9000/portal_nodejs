@@ -32,28 +32,13 @@ export class EmployeeService {
     employeeDetails: CreateEmployeeDto
   ): Promise<CreateEmployeeDto & Employee> {
     try {
-      const newAddress = plainToClass(Address, {
-        line1: employeeDetails.address.line1,
-        line2: employeeDetails.address.line2,
-        city: employeeDetails.address.city,
-        state: employeeDetails.address.state,
-        pin: employeeDetails.address.pin,
-      });
-      const newEmployee = plainToClass(Employee, {
-        name: employeeDetails.name,
-        role: employeeDetails.role,
-        status: employeeDetails.status,
-        experience: employeeDetails.experience,
-        dateofjoining: employeeDetails.dateofjoining,
-        username: employeeDetails.username,
+      employeeDetails = {
+        ...employeeDetails,
         password: employeeDetails.password
           ? await bcrypt.hash(employeeDetails.password, 10)
           : "",
-        age: employeeDetails.age,
-        departmentId: employeeDetails.departmentId,
-        address: newAddress,
-      });
-      const save = await this.employeeRepo.saveEmployeeDetails(newEmployee);
+      };
+      const save = await this.employeeRepo.saveEmployeeDetails(employeeDetails);
       return save;
     } catch (err) {
       // throw new HttpException(400, "Failed to create employee", "code-400");
@@ -65,33 +50,22 @@ export class EmployeeService {
     id: string,
     employeeDetails: UpdateEmployeeDto
   ) {
-    try {
-      const updatedAddress = plainToClass(Address, {
-        id: employeeDetails.addressId,
-        line1: employeeDetails.address.line1,
-        line2: employeeDetails.address.line2,
-        city: employeeDetails.address.city,
-        state: employeeDetails.address.state,
-        pin: employeeDetails.address.pin,
-      });
+    const employee = await this.employeeRepo.getEmployeeById(id);
+    if (!employee) {
+      throw new EntityNotFoundException(ErrorCodes.EMPLOYEE_WITH_ID_NOT_FOUND);
+    }
 
-      const updatedEmployee = plainToClass(Employee, {
-        id: id,
-        name: employeeDetails.name,
-        dateofjoining: employeeDetails.dateofjoining,
-        role: employeeDetails.role,
-        status: employeeDetails.status,
-        experience: employeeDetails.experience,
-        username: employeeDetails.username,
+    try {
+      employeeDetails.address.id = employee.address.id;
+      employeeDetails = {
+        ...employeeDetails,
         password: employeeDetails.password
           ? await bcrypt.hash(employeeDetails.password, 10)
           : "",
-        age: employeeDetails.age,
-        departmentId: employeeDetails.departmentId,
-        address: updatedAddress,
-      });
+      };
       const save = await this.employeeRepo.updateEmployeeDetails(
-        updatedEmployee
+        id,
+        employeeDetails
       );
       return save;
     } catch (err) {
