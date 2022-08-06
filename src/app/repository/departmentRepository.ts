@@ -34,7 +34,9 @@ export class DepartmentRespository {
       id,
     });
   }
-  public async saveDepartmentDetails(departmentDetails: CreateDepartmentDto) {
+  public async saveDepartmentDetails(
+    departmentDetails: CreateDepartmentDto
+  ): Promise<Department> {
     const departmentRepo = getConnection().getRepository(Department);
     return departmentRepo.save(departmentDetails);
   }

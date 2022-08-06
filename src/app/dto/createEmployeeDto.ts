@@ -1,6 +1,5 @@
 import { Type } from "class-transformer";
 import { IsNumber, IsString, ValidateNested } from "class-validator";
-import { Department } from "../entities/Department";
 import { CreateAddressDto } from "./createAddressDto";
 import { CreateDepartmentDto } from "./createDepartmentDto";
 

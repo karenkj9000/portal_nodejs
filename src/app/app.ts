@@ -58,7 +58,6 @@ class App extends EventEmitter {
         next: express.NextFunction
       ) => {
         request.startTime = Date.now();
-        // console.log(request.startTime);
         next();
       }
     );

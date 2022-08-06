@@ -32,7 +32,7 @@ class EmployeeController extends AbstractController {
 
     this.router.put(
       `${this.path}/:id`,
-      //authorize([ROLES.admin]),
+      authorize([ROLES.admin]),
       validationMiddleware(UpdateEmployeeByParamsDto, APP_CONSTANTS.params),
       validationMiddleware(UpdateEmployeeDto, APP_CONSTANTS.body),
       this.updateEmployeeById // params,body validated
@@ -47,7 +47,7 @@ class EmployeeController extends AbstractController {
 
     this.router.post(
       `${this.path}`,
-      //authorize([ROLES.admin]),
+      authorize([ROLES.admin]),
       validationMiddleware(CreateEmployeeDto, APP_CONSTANTS.body),
       // this.asyncRouteHandler(this.createEmployee)
       this.createEmployee // body validated

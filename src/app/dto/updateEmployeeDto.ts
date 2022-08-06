@@ -4,7 +4,6 @@ import {
   IsOptional,
   IsString,
   IsUUID,
-  Validate,
   ValidateNested,
 } from "class-validator";
 import { Address } from "../entities/Address";

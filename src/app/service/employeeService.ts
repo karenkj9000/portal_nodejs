@@ -1,5 +1,3 @@
-import { plainToClass } from "class-transformer";
-import { EntityNotFoundError } from "typeorm";
 import { Employee } from "../entities/Employee";
 import EntityNotFoundException from "../exception/EntityNotFoundException";
 import HttpException from "../exception/HttpException";
@@ -11,15 +9,14 @@ import IncorrectUsernameOrPasswordException from "../exception/IncorrectUsername
 import jsonwebtoken from "jsonwebtoken";
 import { CreateEmployeeDto } from "../dto/createEmployeeDto";
 import { UpdateEmployeeDto } from "../dto/updateEmployeeDto";
-import { Address } from "../entities/Address";
 
 export class EmployeeService {
   constructor(private employeeRepo: EmployeeRespository) {}
-  async getAllEmployees() {
+  async getAllEmployees(): Promise<Employee[]> {
     return await this.employeeRepo.getAllEmployees();
   }
 
-  async getEmployeeById(id: string) {
+  async getEmployeeById(id: string): Promise<Employee> {
     const employee = await this.employeeRepo.getEmployeeById(id);
 
     if (!employee) {
@@ -30,7 +27,7 @@ export class EmployeeService {
 
   public async createEmployee(
     employeeDetails: CreateEmployeeDto
-  ): Promise<CreateEmployeeDto & Employee> {
+  ): Promise<Employee> {
     try {
       employeeDetails = {
         ...employeeDetails,
@@ -39,15 +36,18 @@ export class EmployeeService {
       const save = await this.employeeRepo.saveEmployeeDetails(employeeDetails);
       return save;
     } catch (err) {
-      // throw new HttpException(400, "Failed to create employee", "code-400");
-      throw err;
+      throw new HttpException(
+        400,
+        "Failed to create employee",
+        "CREATE SERVICE FAILED"
+      );
     }
   }
 
   public async updateEmployeeById(
     id: string,
     employeeDetails: UpdateEmployeeDto
-  ) {
+  ): Promise<Employee> {
     const employee = await this.employeeRepo.getEmployeeById(id);
     if (!employee) {
       throw new EntityNotFoundException(ErrorCodes.EMPLOYEE_WITH_ID_NOT_FOUND);
@@ -55,7 +55,7 @@ export class EmployeeService {
 
     try {
       employeeDetails.address.id = employee.address.id;
-      let oldPassword = employee.password;
+      const oldPassword = employee.password;
       employeeDetails = {
         ...employeeDetails,
         password: employeeDetails.password
@@ -68,17 +68,27 @@ export class EmployeeService {
       );
       return save;
     } catch (err) {
-      // throw new HttpException(400, "Failed to create employee", "code-400");
-      throw err;
+      throw new HttpException(
+        400,
+        "Failed to update employee",
+        "UPDATE SERVICE FAILED"
+      );
     }
   }
 
-  public async softDeleteEmployeeById(id: string) {
+  public async softDeleteEmployeeById(id: string): Promise<Employee> {
+    const employee = await this.getEmployeeById(id);
+    if (!employee) {
+      throw new EntityNotFoundException(ErrorCodes.EMPLOYEE_WITH_ID_NOT_FOUND);
+    }
     try {
-      await this.getEmployeeById(id);
       return await this.employeeRepo.softDeleteEmployeeById(id);
     } catch (err) {
-      throw err;
+      throw new HttpException(
+        400,
+        "Failed to delete employee",
+        "EMPLOYEE DELETE FAILED"
+      );
     }
   }
 

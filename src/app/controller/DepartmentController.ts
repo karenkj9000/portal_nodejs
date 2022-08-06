@@ -10,7 +10,6 @@ import { UpdateDepartmentDto } from "../dto/updateDepartmentDto";
 import { GetDepartmentByParamsDto } from "../dto/getDepartmentByParamsDto";
 import { DeleteDepartmentByParamsDto } from "../dto/deleteDepartmentByParamsDto";
 import authorize from "../middleware/authorize";
-import App from "../app";
 
 class DepartmentController extends AbstractController {
   constructor(private departmentService: DepartmentService) {
