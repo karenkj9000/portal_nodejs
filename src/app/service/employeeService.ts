@@ -92,8 +92,10 @@ export class EmployeeService {
     }
   }
 
-  public employeeLogin = async (name: string, password: string) => {
-    const employeeDetails = await this.employeeRepo.getEmployeeByUsername(name);
+  public employeeLogin = async (username: string, password: string) => {
+    const employeeDetails = await this.employeeRepo.getEmployeeByUsername(
+      username
+    );
     if (!employeeDetails) {
       throw new UserNotAuthorizedException(ErrorCodes.UNAUTHORIZED);
     }

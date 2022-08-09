@@ -14,18 +14,22 @@ const authorize = (permittedRoles?: string[]) => {
     res: express.Response,
     next: express.NextFunction
   ) => {
+    const token = getTokenFromRequestHeader(req);
     try {
-      const token = getTokenFromRequestHeader(req);
       jsonwebtoken.verify(token, process.env.JWT_TOKEN_SECRET);
-      const data = jsonwebtoken.decode(token);
+    } catch (error) {
+      return next(new UserNotAuthorizedException(ErrorCodes.UNAUTHORIZED));
+    }
+    const data = jsonwebtoken.decode(token);
+    try {
       const decodedData = JSON.parse(JSON.stringify(data));
       if (!permittedRoles.includes(decodedData["custom:role"])) {
         throw new UserInvalidRoleException(ErrorCodes.UNAUTHORIZED);
       }
-      return next();
     } catch (error) {
       return next(new UserNotAuthorizedException(ErrorCodes.UNAUTHORIZED));
     }
+    return next();
   };
 };
 

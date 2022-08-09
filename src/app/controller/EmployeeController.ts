@@ -17,11 +17,7 @@ class EmployeeController extends AbstractController {
     this.initializeRoutes();
   }
   protected initializeRoutes() {
-    this.router.get(
-      `${this.path}`,
-      authorize([ROLES.admin, ROLES.developer, ROLES.hr]),
-      this.getEmployee
-    );
+    this.router.get(`${this.path}`, authorize([ROLES.admin]), this.getEmployee);
 
     this.router.get(
       `${this.path}/:id`,
